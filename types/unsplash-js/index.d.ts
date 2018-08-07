@@ -2,6 +2,7 @@
 // Project: https://github.com/unsplash/unsplash-js#readme
 // Definitions by: Gus Sillero <https://github.com/sillero>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+// TypeScript Version: 2.8
 
 export default UnsplashSDK;
 export function toJson(res: object): object;
@@ -49,7 +50,9 @@ declare namespace UnsplashSDK {
         page?: number,
         per_page?: number
     ) => RequestResponse;
-    type Photo = {};
+    interface Photo {
+        id: string;
+    }
 
     interface Auth {
         getAuthenticationUrl: (scope?: Scope[]) => string;
