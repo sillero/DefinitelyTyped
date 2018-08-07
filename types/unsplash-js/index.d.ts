@@ -4,11 +4,8 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 // TypeScript Version: 2.8
 
-
 export default UnsplashSDK;
 export function toJson<R = object>(res: Response): Response | Promise<R>;
-
-// type Response = object;
 
 declare class UnsplashSDK {
     constructor(options: UnsplashSDK.ConstructorOptions);
