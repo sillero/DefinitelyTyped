@@ -10,13 +10,188 @@ export function toJson(res: object): object;
 declare class UnsplashSDK {
     constructor(options: UnsplashSDK.ConstructorOptions);
 
-    auth: UnsplashSDK.Auth;
-    currentUser: UnsplashSDK.CurrentUser;
-    users: UnsplashSDK.Users;
-    photos: UnsplashSDK.Photos;
-    collections: UnsplashSDK.Collections;
-    search: UnsplashSDK.Search;
-    stats: UnsplashSDK.Stats;
+    auth: Auth;
+    currentUser: CurrentUser;
+    users: Users;
+    photos: Photos;
+    collections: Collections;
+    search: Search;
+    stats: Stats;
+}
+
+type RequestResponse<R = any> = Promise<R>;
+
+interface Auth {
+    getAuthenticationUrl: (scope?: UnsplashSDK.Scope[]) => string;
+    userAuthentication: (code: string) => RequestResponse;
+    setBearerToken: (accessToken: string) => void;
+}
+
+interface CurrentUser {
+    profile: () => RequestResponse;
+    updateProfile: (
+        options: {
+            username?: string;
+            firstName?: string;
+            lastName?: string;
+            email?: string;
+            url?: string;
+            location?: string;
+            bio?: string;
+            instagramUsername?: string;
+        }
+    ) => RequestResponse;
+}
+
+interface Collections {
+    listCollections: (
+        page?: number,
+        perPage?: number,
+        orderBy?: UnsplashSDK.OrderBy
+    ) => RequestResponse;
+
+    listCuratedCollections: (
+        page?: number,
+        perPage?: number
+    ) => RequestResponse;
+
+    listFeaturedCollections: (
+        page?: number,
+        perPage?: number
+    ) => RequestResponse;
+
+    getCollection: (id: number) => RequestResponse;
+
+    getCuratedCollection: (id: number) => RequestResponse;
+
+    getCollectionPhotos: (
+        id: number,
+        page?: number,
+        perPage?: number,
+        orderBy?: UnsplashSDK.OrderBy
+    ) => RequestResponse;
+
+    getCuratedCollectionPhotos: (
+        id: number,
+        page?: number,
+        perPage?: number,
+        orderBy?: UnsplashSDK.OrderBy
+    ) => RequestResponse;
+
+    createCollection: (
+        title: string,
+        description?: string,
+        isPrivate?: boolean
+    ) => RequestResponse;
+
+    updateCollection: (
+        id: number,
+        title?: string,
+        description?: string,
+        isPrivate?: boolean
+    ) => RequestResponse;
+
+    deleteCollection: (id: number) => RequestResponse;
+
+    addPhotoToCollection: (
+        collectionId: number,
+        photoId: string
+    ) => RequestResponse;
+
+    removePhotoFromCollection: (
+        collectionId: number,
+        photoId: string
+    ) => RequestResponse;
+
+    listRelatedCollections: (collectionId: number) => RequestResponse;
+}
+interface Photos {
+    listPhotos: (
+        page?: number,
+        perPage?: number,
+        orderBy?: UnsplashSDK.OrderBy
+    ) => RequestResponse;
+
+    listCuratedPhotos: (
+        page?: number,
+        perPage?: number,
+        orderBy?: UnsplashSDK.OrderBy
+    ) => RequestResponse;
+
+    getPhoto: (
+        id: string,
+        width?: number,
+        height?: number,
+        rectangle?: [number, number, number, number]
+    ) => RequestResponse;
+
+    getPhotoStats: (id: string) => RequestResponse;
+
+    getRandomPhoto: (
+        options: {
+            width?: number;
+            height?: number;
+            query?: string;
+            username?: string;
+            featured?: boolean;
+            collections?: string[];
+            count?: number;
+        }
+    ) => RequestResponse;
+
+    likePhoto: (id: string) => RequestResponse;
+
+    unlikePhoto: (id: string) => RequestResponse;
+
+    downloadPhoto: (photo: UnsplashSDK.Photo) => RequestResponse;
+}
+
+type Searcher = (
+    keyword: string,
+    page?: number,
+    per_page?: number
+) => RequestResponse;
+
+interface Search {
+    photos: Searcher;
+    users: Searcher;
+    collections: Searcher;
+}
+
+interface Stats {
+    total: () => RequestResponse;
+}
+
+interface Users {
+    profile: (username: string) => RequestResponse;
+
+    photos: (
+        username: string,
+        page?: number,
+        perPage?: number,
+        orderBy?: UnsplashSDK.OrderBy,
+        stats?: boolean
+    ) => RequestResponse;
+
+    likes: (
+        username: string,
+        page?: number,
+        perPage?: number,
+        orderBy?: UnsplashSDK.OrderBy
+    ) => RequestResponse;
+
+    collections: (
+        username: string,
+        page?: number,
+        perPage?: number,
+        orderBy?: UnsplashSDK.CollectionsOrderBy
+    ) => RequestResponse;
+
+    statistics: (
+        username: string,
+        resolution?: UnsplashSDK.Resolution,
+        quantity?: number
+    ) => RequestResponse;
 }
 
 declare namespace UnsplashSDK {
@@ -44,180 +219,7 @@ declare namespace UnsplashSDK {
     type Resolution = "days";
     type CollectionsOrderBy = "published" | "updated";
 
-    type RequestResponse<R = any> = Promise<R>;
-    type Searcher = (
-        keyword: string,
-        page?: number,
-        per_page?: number
-    ) => RequestResponse;
     interface Photo {
         id: string;
-    }
-
-    interface Auth {
-        getAuthenticationUrl: (scope?: Scope[]) => string;
-        userAuthentication: (code: string) => RequestResponse;
-        setBearerToken: (accessToken: string) => void;
-    }
-
-    interface CurrentUser {
-        profile: () => RequestResponse;
-        updateProfile: (
-            options: {
-                username?: string;
-                firstName?: string;
-                lastName?: string;
-                email?: string;
-                url?: string;
-                location?: string;
-                bio?: string;
-                instagramUsername?: string;
-            }
-        ) => RequestResponse;
-    }
-
-    interface Collections {
-        listCollections: (
-            page?: number,
-            perPage?: number,
-            orderBy?: OrderBy
-        ) => RequestResponse;
-
-        listCuratedCollections: (
-            page?: number,
-            perPage?: number
-        ) => RequestResponse;
-
-        listFeaturedCollections: (
-            page?: number,
-            perPage?: number
-        ) => RequestResponse;
-
-        getCollection: (id: number) => RequestResponse;
-
-        getCuratedCollection: (id: number) => RequestResponse;
-
-        getCollectionPhotos: (
-            id: number,
-            page?: number,
-            perPage?: number,
-            orderBy?: OrderBy
-        ) => RequestResponse;
-
-        getCuratedCollectionPhotos: (
-            id: number,
-            page?: number,
-            perPage?: number,
-            orderBy?: OrderBy
-        ) => RequestResponse;
-
-        createCollection: (
-            title: string,
-            description?: string,
-            isPrivate?: boolean
-        ) => RequestResponse;
-
-        updateCollection: (
-            id: number,
-            title?: string,
-            description?: string,
-            isPrivate?: boolean
-        ) => RequestResponse;
-
-        deleteCollection: (id: number) => RequestResponse;
-
-        addPhotoToCollection: (
-            collectionId: number,
-            photoId: string
-        ) => RequestResponse;
-
-        removePhotoFromCollection: (
-            collectionId: number,
-            photoId: string
-        ) => RequestResponse;
-
-        listRelatedCollections: (collectionId: number) => RequestResponse;
-    }
-    interface Photos {
-        listPhotos: (
-            page?: number,
-            perPage?: number,
-            orderBy?: OrderBy
-        ) => RequestResponse;
-
-        listCuratedPhotos: (
-            page?: number,
-            perPage?: number,
-            orderBy?: OrderBy
-        ) => RequestResponse;
-
-        getPhoto: (
-            id: string,
-            width?: number,
-            height?: number,
-            rectangle?: [number, number, number, number]
-        ) => RequestResponse;
-
-        getPhotoStats: (id: string) => RequestResponse;
-
-        getRandomPhoto: (
-            options: {
-                width?: number;
-                height?: number;
-                query?: string;
-                username?: string;
-                featured?: boolean;
-                collections?: string[];
-                count?: number;
-            }
-        ) => RequestResponse;
-
-        likePhoto: (id: string) => RequestResponse;
-
-        unlikePhoto: (id: string) => RequestResponse;
-
-        downloadPhoto: (photo: Photo) => RequestResponse;
-    }
-
-    interface Search {
-        photos: Searcher;
-        users: Searcher;
-        collections: Searcher;
-    }
-
-    interface Stats {
-        total: () => RequestResponse;
-    }
-
-    interface Users {
-        profile: (username: string) => RequestResponse;
-
-        photos: (
-            username: string,
-            page?: number,
-            perPage?: number,
-            orderBy?: OrderBy,
-            stats?: boolean
-        ) => RequestResponse;
-
-        likes: (
-            username: string,
-            page?: number,
-            perPage?: number,
-            orderBy?: OrderBy
-        ) => RequestResponse;
-
-        collections: (
-            username: string,
-            page?: number,
-            perPage?: number,
-            orderBy?: CollectionsOrderBy
-        ) => RequestResponse;
-
-        statistics: (
-            username: string,
-            resolution?: Resolution,
-            quantity?: number
-        ) => RequestResponse;
     }
 }
