@@ -4,8 +4,11 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 // TypeScript Version: 2.8
 
+
 export default UnsplashSDK;
-export function toJson(res: object): object;
+export function toJson<R = object>(res: Response): Response | Promise<R>;
+
+// type Response = object;
 
 declare class UnsplashSDK {
     constructor(options: UnsplashSDK.ConstructorOptions);
@@ -19,16 +22,14 @@ declare class UnsplashSDK {
     stats: Stats;
 }
 
-type RequestResponse<R = any> = Promise<R>;
-
 interface Auth {
     getAuthenticationUrl: (scope?: UnsplashSDK.Scope[]) => string;
-    userAuthentication: (code: string) => RequestResponse;
+    userAuthentication: (code: string) => Promise<Response>;
     setBearerToken: (accessToken: string) => void;
 }
 
 interface CurrentUser {
-    profile: () => RequestResponse;
+    profile: () => Promise<Response>;
     updateProfile: (
         options: {
             username?: string;
@@ -40,7 +41,7 @@ interface CurrentUser {
             bio?: string;
             instagramUsername?: string;
         }
-    ) => RequestResponse;
+    ) => Promise<Response>;
 }
 
 interface Collections {
@@ -48,84 +49,84 @@ interface Collections {
         page?: number,
         perPage?: number,
         orderBy?: UnsplashSDK.OrderBy
-    ) => RequestResponse;
+    ) => Promise<Response>;
 
     listCuratedCollections: (
         page?: number,
         perPage?: number
-    ) => RequestResponse;
+    ) => Promise<Response>;
 
     listFeaturedCollections: (
         page?: number,
         perPage?: number
-    ) => RequestResponse;
+    ) => Promise<Response>;
 
-    getCollection: (id: number) => RequestResponse;
+    getCollection: (id: number) => Promise<Response>;
 
-    getCuratedCollection: (id: number) => RequestResponse;
+    getCuratedCollection: (id: number) => Promise<Response>;
 
     getCollectionPhotos: (
         id: number,
         page?: number,
         perPage?: number,
         orderBy?: UnsplashSDK.OrderBy
-    ) => RequestResponse;
+    ) => Promise<Response>;
 
     getCuratedCollectionPhotos: (
         id: number,
         page?: number,
         perPage?: number,
         orderBy?: UnsplashSDK.OrderBy
-    ) => RequestResponse;
+    ) => Promise<Response>;
 
     createCollection: (
         title: string,
         description?: string,
         isPrivate?: boolean
-    ) => RequestResponse;
+    ) => Promise<Response>;
 
     updateCollection: (
         id: number,
         title?: string,
         description?: string,
         isPrivate?: boolean
-    ) => RequestResponse;
+    ) => Promise<Response>;
 
-    deleteCollection: (id: number) => RequestResponse;
+    deleteCollection: (id: number) => Promise<Response>;
 
     addPhotoToCollection: (
         collectionId: number,
         photoId: string
-    ) => RequestResponse;
+    ) => Promise<Response>;
 
     removePhotoFromCollection: (
         collectionId: number,
         photoId: string
-    ) => RequestResponse;
+    ) => Promise<Response>;
 
-    listRelatedCollections: (collectionId: number) => RequestResponse;
+    listRelatedCollections: (collectionId: number) => Promise<Response>;
 }
 interface Photos {
     listPhotos: (
         page?: number,
         perPage?: number,
         orderBy?: UnsplashSDK.OrderBy
-    ) => RequestResponse;
+    ) => Promise<Response>;
 
     listCuratedPhotos: (
         page?: number,
         perPage?: number,
         orderBy?: UnsplashSDK.OrderBy
-    ) => RequestResponse;
+    ) => Promise<Response>;
 
     getPhoto: (
         id: string,
         width?: number,
         height?: number,
         rectangle?: [number, number, number, number]
-    ) => RequestResponse;
+    ) => Promise<Response>;
 
-    getPhotoStats: (id: string) => RequestResponse;
+    getPhotoStats: (id: string) => Promise<Response>;
 
     getRandomPhoto: (
         options: {
@@ -137,20 +138,20 @@ interface Photos {
             collections?: string[];
             count?: number;
         }
-    ) => RequestResponse;
+    ) => Promise<Response>;
 
-    likePhoto: (id: string) => RequestResponse;
+    likePhoto: (id: string) => Promise<Response>;
 
-    unlikePhoto: (id: string) => RequestResponse;
+    unlikePhoto: (id: string) => Promise<Response>;
 
-    downloadPhoto: (photo: UnsplashSDK.Photo) => RequestResponse;
+    downloadPhoto: (photo: UnsplashSDK.Photo) => Promise<Response>;
 }
 
 type Searcher = (
     keyword: string,
     page?: number,
     per_page?: number
-) => RequestResponse;
+) => Promise<Response>;
 
 interface Search {
     photos: Searcher;
@@ -159,11 +160,11 @@ interface Search {
 }
 
 interface Stats {
-    total: () => RequestResponse;
+    total: () => Promise<Response>;
 }
 
 interface Users {
-    profile: (username: string) => RequestResponse;
+    profile: (username: string) => Promise<Response>;
 
     photos: (
         username: string,
@@ -171,27 +172,27 @@ interface Users {
         perPage?: number,
         orderBy?: UnsplashSDK.OrderBy,
         stats?: boolean
-    ) => RequestResponse;
+    ) => Promise<Response>;
 
     likes: (
         username: string,
         page?: number,
         perPage?: number,
         orderBy?: UnsplashSDK.OrderBy
-    ) => RequestResponse;
+    ) => Promise<Response>;
 
     collections: (
         username: string,
         page?: number,
         perPage?: number,
         orderBy?: UnsplashSDK.CollectionsOrderBy
-    ) => RequestResponse;
+    ) => Promise<Response>;
 
     statistics: (
         username: string,
         resolution?: UnsplashSDK.Resolution,
         quantity?: number
-    ) => RequestResponse;
+    ) => Promise<Response>;
 }
 
 declare namespace UnsplashSDK {
@@ -219,7 +220,128 @@ declare namespace UnsplashSDK {
     type Resolution = "days";
     type CollectionsOrderBy = "published" | "updated";
 
+    interface PhotoURLs {
+        raw: string;
+        full: string;
+        regular: string;
+        small: string;
+        thumb: string;
+    }
+
+    interface PhotoLinks {
+        self: string;
+        html: string;
+        download: string;
+        download_location: string;
+    }
+
+    interface UserLinks {
+        self: string;
+        html: string;
+        photos: string;
+        likes: string;
+        portfolio: string;
+        following: string;
+        followers: string;
+    }
+
+    interface UserProfileImageLinks {
+        small: string;
+        medium: string;
+        large: string;
+    }
+
+    interface User {
+        id: string;
+        updated_at: string;
+        username: string;
+        name: string;
+        first_name: string;
+        last_name: string | null;
+        twitter_username: string | null;
+        portfolio_url: string | null;
+        bio: string | null;
+        location: string | null;
+        links: UserLinks;
+        profile_image: UserProfileImageLinks;
+        instagram_username: string;
+        total_collections: number;
+        total_likes: number;
+        total_photos: number;
+    }
+
     interface Photo {
         id: string;
+        created_at: string;
+        updated_at: string;
+        width: number;
+        height: number;
+        color: string;
+        description: string | null;
+        urls: PhotoURLs;
+        links: PhotoLinks;
+        categories: string[];
+        sponsored: boolean;
+        likes: number;
+        liked_by_user: boolean;
+        current_user_collections: string[];
+        slug: null;
+        user: User;
+    }
+
+    interface PreviewPhoto {
+        id: number;
+        urls: PhotoURLs;
+    }
+
+    interface Tag {
+        title: string;
+    }
+
+    interface Collection {
+        id: number;
+        title: string;
+        description: string;
+        published_at: string;
+        updated_at: string;
+        curated: boolean;
+        featured: boolean;
+        total_photos: number;
+        private: boolean;
+        share_key: string;
+        tags: Tag[];
+        cover_photo: Photo[];
+        preview_photos: PreviewPhoto[];
+        user: User;
+    }
+
+    interface Meta {
+        canonical: string | null;
+        description: string | null;
+        h1: string | null;
+        index: boolean;
+        keyword: string;
+        suffix: string | null;
+        text: string | null;
+        title: string | null;
+    }
+
+    interface SearchResponse<T> {
+        results: T[];
+        total: number;
+        total_pages: number;
+    }
+
+    interface RelatedSearch {
+        title: string;
+        url: string;
+    }
+
+    interface SearchAllResponse {
+        collections: SearchResponse<Collection>;
+        meta: Meta;
+        photos: SearchResponse<Photo>;
+        related_searches: RelatedSearch[];
+        users: SearchResponse<User>;
     }
 }
